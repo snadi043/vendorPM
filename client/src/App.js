@@ -1,42 +1,63 @@
-import { useState, useEffect } from 'react';
+// import logo from './logo.svg'; 
+//If the imports are not being utilized in any individual file, it is always better to delete them, so they don't throw warnings during compilation and build of the application.
 
-import logo from './logo.svg';
+
+import { useState, useEffect } from 'react';
 import './App.css';
-import {
-  readPlayers,
-  readPlayersFromJsonString,
-  readPlayersFromDatabase,
-  displayPlayersFromJson,
-  displayPlayersFromDatabase,
-  displayPlayersFromApi
-} from './Players'
+
+import ReadPlayersFromDatabase from './Players/readPlayersFromDatabase';
+import ReadPlayersFromJsonString from './Players/readPlayersFromJsonString';
+import DisplayPlayersFromDatabase from './Players/displayPlayersFromDatabase';
+import DisplayPlayersFromJson from './Players/displayPlayersFromDatabase';
+//import TimeStamp from './TimeStamp';
+import useTimeStamp from './TimeStamp';
+
+// import {
+//   readPlayers,
+//   //readPlayersFromJsonString,
+//   //readPlayersFromDatabase,
+//   //displayPlayersFromJson,
+//   //displayPlayersFromDatabase,
+//   displayPlayersFromApi
+// } from './Players/Players'
 
 function App() {
 
   const [players, setPlayers] = useState([]);
-  const [timestamp, setTimestamp] = useState();
+  const timestamp = useTimeStamp();
+  //const [timestamp, setTimestamp] = useState();
+  
 
 
   const doGetPlayers = async (source, fileName) => {
-    const rightNow = new Date();
-    setTimestamp(`Data last changed: ${rightNow.toLocaleTimeString()}`);
+
+    const timestamp = useTimeStamp();
+    // const rightNow = new Date();
+    // setTimestamp(`Data last changed: ${rightNow.toLocaleTimeString()}`);
 
     let players;
     switch (source) {
       case 'json':
-        players = JSON.parse(readPlayersFromJsonString());
-        setPlayers(displayPlayersFromJson(players))
+        players = JSON.parse(<ReadPlayersFromJsonString/>)
+        //players = JSON.parse(readPlayersFromJsonString());
+        setPlayers(<DisplayPlayersFromJson/>)
+        //setPlayers(displayPlayersFromJson(players))
         break;
+
       case 'database':
-        players = readPlayersFromDatabase();
-        setPlayers(displayPlayersFromDatabase(players))
+        players = <ReadPlayersFromDatabase/>
+        //players = readPlayersFromDatabase();
+        setPlayers(<DisplayPlayersFromDatabase/>)
+        //setPlayers(displayPlayersFromDatabase(players))
         break;
+
       case 'api':
         const playersResponse = await fetch('api/getPlayersFromFile/.%2Fdata%2Fplayerdata.json', {
           headers: {
             'accept': 'application/json'
           }
         });
+
         players = JSON.parse(await playersResponse.json());
         const responseDisplay = await fetch('/ui/getApiRenderResponseDisplay', {
           method: 'POST',
@@ -51,10 +72,15 @@ function App() {
         break;
     }
   }
-  const doPlayersClear = () => {
-    setTimestamp('');
-    setPlayers([]);
-  }
+
+  // const doPlayersClear = () => {
+  //   setTimestamp('');
+  //   setPlayers([]);
+  // }
+
+  useEffect(()=>{
+    useTimeStamp('');
+  },[setPlayers])
 
   const doRender = () => {
     if (typeof players === 'object') {
