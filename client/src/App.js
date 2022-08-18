@@ -12,6 +12,10 @@ import DisplayPlayersFromJson from './Players/displayPlayersFromDatabase';
 //import TimeStamp from './TimeStamp';
 import useTimeStamp from './TimeStamp';
 
+import PlayersResponse from './api';
+import ClearButton from './utilities/Button/ClearButton';
+import DoRender from './Render';
+
 // import {
 //   readPlayers,
 //   //readPlayersFromJsonString,
@@ -52,49 +56,50 @@ function App() {
         break;
 
       case 'api':
-        const playersResponse = await fetch('api/getPlayersFromFile/.%2Fdata%2Fplayerdata.json', {
-          headers: {
-            'accept': 'application/json'
-          }
-        });
+        // const playersResponse = await fetch('api/getPlayersFromFile/.%2Fdata%2Fplayerdata.json', {
+        //   headers: {
+        //     'accept': 'application/json'
+        //   }
+        // });
 
-        players = JSON.parse(await playersResponse.json());
-        const responseDisplay = await fetch('/ui/getApiRenderResponseDisplay', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(players)
-        });
-        const responseText = await responseDisplay.text();
+        // players = JSON.parse(await playersResponse.json());
+        // const responseDisplay = await fetch('/ui/getApiRenderResponseDisplay', {
+        //   method: 'POST',
+        //   headers: {
+        //     'Content-Type': 'application/json'
+        //   },
+        //   body: JSON.stringify(players)
+        // });
+        const responseText = await PlayersResponse.responseDisplay.text();
+        // const responseText = await responseDisplay.text();
         const responseArray = JSON.parse(responseText);
         setPlayers(responseArray.join(''));
         break;
     }
   }
 
-  // const doPlayersClear = () => {
-  //   setTimestamp('');
+  //  const doPlayersClear = () => {
+  //   useTimeStamp('');
   //   setPlayers([]);
+  //  }
+
+  // useEffect(()=>{
+  //   useTimeStamp('');
+  // },[setPlayers])
+
+  // const doRender = () => {
+  //   if (typeof players === 'object') {
+  //     return (
+  //       <ul>
+  //         {players}
+  //       </ul>
+  //     );
+  //   } else { 
+  //     return (
+  //       <ul dangerouslySetInnerHTML={{__html: players}} />
+  //     );
+  //   }
   // }
-
-  useEffect(()=>{
-    useTimeStamp('');
-  },[setPlayers])
-
-  const doRender = () => {
-    if (typeof players === 'object') {
-      return (
-        <ul>
-          {players}
-        </ul>
-      );
-    } else { 
-      return (
-        <ul dangerouslySetInnerHTML={{__html: players}} />
-      );
-    }
-  }
 
   return (
     <div className="App">
@@ -111,12 +116,14 @@ function App() {
             <button onClick={() => doGetPlayers('api', '')}>
               Load Players API
             </button>
-            <button onClick={() => doPlayersClear()}>
+            <ClearButton/>
+            {/* <button onClick={() => doPlayersClear()}>
               Clear Players
-            </button>
+            </button> */}
           </div>
           <div className={'players-list'}>
-            {doRender()}
+            <DoRender />
+            {/* {doRender()} */}
           </div>
         </div>
       </header>
