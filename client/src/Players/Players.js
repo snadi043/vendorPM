@@ -9,7 +9,7 @@ const ReadPlayers = (source, fileName) => {
         case 'db':
             return <ReadPlayersFromDatabase/>;
         case 'json':
-            return <ReadPlayersFromJsonString/>;
+            return ReadPlayersFromJsonString.jsonData();
         case 'file':
             return '';
         default:
